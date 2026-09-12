@@ -16,51 +16,38 @@
 <body>
   <div class="card">
     <h1>JBMCS AI Core Platform</h1>
-    <p>Phase 6: Dynamic Knowledge Base Integration</p>
+    <p>JB ModCraft Studio - Live Engine Status</p>
     
-    <div id="prompt-status" class="status-box">Loading System Instructions...</div>
-    <div id="data-status" class="status-box">Loading Manufacturing Knowledge Base...</div>
+    <div id="app-status" class="status-box">Connecting to Supabase...</div>
   </div>
 
   <script>
     const SUPABASE_URL = "https://dz1vczotqghsmszwlkh.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_OK20t15BXtHB1c88XwwWW_41sKA-D";
 
-    async function loadEngineData() {
-      const promptDiv = document.getElementById('prompt-status');
-      const dataDiv = document.getElementById('data-status');
-
+    async function initApp() {
+      const statusBox = document.getElementById('app-status');
       try {
-        if (!window.supabase) throw new Error("Supabase SDK failed to load.");
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        if (!window.supabase) throw new Error("Supabase SDK script failed to load.");
+        const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        // 1. Fetch System Prompt
-        const { data: promptData, error: promptError } = await supabase
+        // Test query to ai_prompt_context
+        const { data, error } = await client
           .from('ai_prompt_context')
-          .select('prompt_key, system_instruction')
-          .eq('prompt_key', 'footwear_design_v1')
-          .single();
+          .select('*')
+          .limit(1);
 
-        if (promptError) throw promptError;
+        if (error) throw error;
 
-        promptDiv.style.color = '#3fb950';
-        promptDiv.innerHTML = `<strong>[Prompt Loaded]</strong>\nKey: ${promptData.prompt_key}\nInstruction: "${promptData.system_instruction}"`;
-
-        // 2. Fetch Components & Categories Count
-        const { count: compCount } = await supabase.from('footwear_components').select('*', { count: 'exact', head: true });
-        const { count: catCount } = await supabase.from('product_categories').select('*', { count: 'exact', head: true });
-        const { count: methodCount } = await supabase.from('construction_methods').select('*', { count: 'exact', head: true });
-
-        dataDiv.style.color = '#3fb950';
-        dataDiv.innerHTML = `<strong>[Knowledge Base Connected]</strong>\n- Product Categories: ${catCount} loaded\n- Footwear Components: ${compCount} loaded\n- Construction Methods: ${methodCount} loaded`;
-
+        statusBox.style.color = '#3fb950';
+        statusBox.innerHTML = `<strong>[SUCCESS: API Connected]</strong>\n\nDatabase query successful!\nRecords found: ${data.length}\n\nYour JBMCS AI Platform engine is live and operational.`;
       } catch (err) {
-        promptDiv.style.color = '#f85149';
-        promptDiv.innerHTML = `<strong>[Connection Error]</strong>\n${err.message || err}`;
+        statusBox.style.color = '#f85149';
+        statusBox.innerHTML = `<strong>[CONNECTION ERROR]</strong>\n\n${err.message || JSON.stringify(err)}`;
       }
     }
 
-    loadEngineData();
+    initApp();
   </script>
 </body>
 </html>
