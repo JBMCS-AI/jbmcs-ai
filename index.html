@@ -4,17 +4,49 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>JBMCS AI - Core Engine</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body { font-family: system-ui, sans-serif; background: #0d1117; color: #f0f6fc; display: flex; height: 100vh; align-items: center; justify-content: center; margin: 0; }
-    .card { background: #161b22; border: 1px solid #30363d; padding: 2rem; border-radius: 8px; text-align: center; max-width: 400px; }
-    h1 { color: #58a6ff; font-size: 1.5rem; }
+    .card { background: #161b22; border: 1px solid #30363d; padding: 2rem; border-radius: 8px; text-align: center; max-width: 480px; width: 90%; }
+    h1 { color: #58a6ff; font-size: 1.5rem; margin-bottom: 0.5rem; }
     p { color: #8b949e; font-size: 0.9rem; }
+    .status-box { background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 1rem; margin-top: 1rem; text-align: left; font-family: monospace; font-size: 0.8rem; color: #7ee787; white-space: pre-wrap; word-break: break-all; }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>JBMCS AI Core Platform</h1>
-    <p>Phase 5: Core Prompt Routing Engine & Application Initialized.</p>
+    <p>Phase 6: Dynamic Supabase Engine Integration</p>
+    <div id="status" class="status-box">Connecting to Supabase API...</div>
   </div>
+
+  <script>
+    // Replace with your project credentials if tested locally, 
+    // or let Vercel handle environment injection
+    const SUPABASE_URL = "https://your-supabase-url.supabase.co"; 
+    const SUPABASE_ANON_KEY = "your-anon-key";
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function fetchPromptContext() {
+      const statusDiv = document.getElementById('status');
+      try {
+        const { data, error } = await supabase
+          .from('ai_prompt_context')
+          .select('prompt_key, system_instruction, category')
+          .eq('prompt_key', 'footwear_design_v1')
+          .single();
+
+        if (error) throw error;
+
+        statusDiv.innerHTML = `<strong>[API Connected]</strong>\nPrompt Key: ${data.prompt_key}\nCategory: ${data.category}\n\nInstruction:\n"${data.system_instruction}"`;
+      } catch (err) {
+        statusDiv.style.color = '#f85149';
+        statusDiv.innerHTML = `[API Status] Configured & ready for environment injection.\nMessage: ${err.message}`;
+      }
+    }
+
+    fetchPromptContext();
+  </script>
 </body>
 </html>
