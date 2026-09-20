@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JBMCS AI - Diagnostics</title>
+  <title>JBMCS AI - Core Engine</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body { font-family: system-ui, sans-serif; background: #0d1117; color: #f0f6fc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
     .card { background: #161b22; border: 1px solid #30363d; padding: 2rem; border-radius: 8px; max-width: 550px; width: 90%; }
@@ -14,39 +15,32 @@
 </head>
 <body>
   <div class="card">
-    <h1>JBMCS AI Diagnostics</h1>
-    <p>Direct HTTP REST Test</p>
-    <div id="app-status" class="status-box">Testing connection...</div>
+    <h1>JBMCS AI Core Platform</h1>
+    <p>JB ModCraft Studio - Live Engine Status</p>
+    <div id="app-status" class="status-box">Connecting to Supabase...</div>
   </div>
 
   <script>
     const SUPABASE_URL = "https://dz1vczotqghsmszwlkh.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6aXZjemV0cXFuaHNuc3p3bGtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5MDg5OTgsImV4cCI6MjEwNDQ4NDk5OH0._nGYzlTCvSCUcdraeVIpQjygbhslNmwcYuoZUSkhXCI";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6aXZjemV0cXFuaHNuc3p3bGtoIwgicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5MDg5OTgsImV4cCI6MjEwNDQ4NDk5OH0._nGYzlTCvSCUcdraeVIpQjygbhslNmwcYuoZUSkhXCI";
 
-    async function testConnection() {
+    async function initApp() {
       const statusBox = document.getElementById('app-status');
       try {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/product_categories?select=*&limit=1`, {
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-          }
-        });
+        const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { data, error } = await client.from('product_categories').select('*').limit(5);
 
-        if (!response.ok) {
-          throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
-        }
+        if (error) throw error;
 
-        const data = await response.json();
         statusBox.style.color = '#3fb950';
-        statusBox.innerHTML = `<strong>[REST API SUCCESS]</strong>\n\nData fetched successfully:\n${JSON.stringify(data, null, 2)}`;
+        statusBox.innerHTML = `[SUCCESS: API Connected]\n\nFetched ${data.length} categories from Supabase successfully!`;
       } catch (err) {
         statusBox.style.color = '#f85149';
-        statusBox.innerHTML = `<strong>[FETCH FAILED]</strong>\n\n${err.message}\n\nNote: If using a mobile browser, check if a VPN, ad blocker, or strict tracking protection is blocking external requests.`;
+        statusBox.innerHTML = `[CONNECTION ERROR]\n\n${err.message}`;
       }
     }
 
-    testConnection();
+    initApp();
   </script>
 </body>
 </html>
