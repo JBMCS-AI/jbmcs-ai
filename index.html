@@ -23,7 +23,7 @@
 
   <script>
     const SUPABASE_URL = "https://dz1vczotqghsmszwlkh.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_OK20t15BXtHB1c88XwwWW_41sKA-D";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6aXZjemV0cXFuaHNuc3p3bGtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5MDg5OTgsImV4cCI6MjEwNDQ4NDk5OH0._nGYzlTCvSCUcdraeVIpQjygbhslNmwcYuoZUSkhXCI";
 
     async function initApp() {
       const statusBox = document.getElementById('app-status');
@@ -31,9 +31,9 @@
         if (!window.supabase) throw new Error("Supabase SDK script failed to load.");
         const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        // Test query to ai_prompt_context
+        // Query one of your existing tables: product_categories
         const { data, error } = await client
-          .from('ai_prompt_context')
+          .from('product_categories')
           .select('*')
           .limit(1);
 
